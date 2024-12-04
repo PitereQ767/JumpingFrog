@@ -45,6 +45,8 @@ CMakeFiles\JumpingFrog2.dir\main.cpp.obj.ddi: \
  C:/msys64/mingw64/include/_mingw_stdarg.h \
  C:/msys64/mingw64/include/ncursesw/unctrl.h \
  C:/msys64/mingw64/include/ncursesw/curses.h \
+ C:/msys64/mingw64/include/c++/14.2.0/cstring \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/version.h \
  C:/msys64/mingw64/include/time.h C:/msys64/mingw64/include/sys/timeb.h \
  C:/msys64/mingw64/include/sec_api/sys/timeb_s.h \
  C:/msys64/mingw64/include/_timeval.h \

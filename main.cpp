@@ -83,7 +83,6 @@ void Sleep(unsigned int tui) {
     usleep(tui * 1000);  // przekształcamy na mikrosekundy (1 ms = 1000 μs)
 }
 
-
 //*******************************
 //**** TIMER FUNCTIONS **********
 //*******************************
@@ -99,7 +98,7 @@ void ShowTimer(WIN* W, float pass_time, int life) {
 }
 
 // Funkcja inicjalizująca timer
-TIMER* InitTimer(WIN* status) {
+TIMER* InitTimer(WIN* status, int PASS_TIME) {
     TIMER* timer = (TIMER*)malloc(sizeof(TIMER));
     if (timer == NULL) {
         fprintf(stderr, "Error creating TIMER.\n");
@@ -112,7 +111,7 @@ TIMER* InitTimer(WIN* status) {
 }
 
 // Funkcja aktualizująca czas w grze
-int UpdateTimer(TIMER* T, WIN* status, OBJ* ob) {
+int UpdateTimer(TIMER* T, WIN* status, OBJ* ob, int PASS_TIME) {
     // Zwiększamy numer klatki
     T->frame_no++;
 
@@ -148,7 +147,7 @@ void PrintFrog(OBJ* ob){
     wrefresh(ob->win->window);  // Odśwież okno, aby pokazać zmiany
 }
 
-OBJ* InitFrog(WIN* w, int col) {
+OBJ* InitFrog(WIN* w, int col, int lives) {
     OBJ* ob = (OBJ*)malloc(sizeof(OBJ));
     if (ob == NULL) {
         fprintf(stderr, "Error creating FROG.\n");
@@ -165,7 +164,7 @@ OBJ* InitFrog(WIN* w, int col) {
     ob ->xmax = w->cols-2;
     ob->ymin = 1;
     ob->ymax = w->rows-2;
-    ob->life = LIFE;
+    ob->life = lives;
     ob->last_jump = time(NULL);
 
     PrintFrog(ob);
@@ -173,7 +172,7 @@ OBJ* InitFrog(WIN* w, int col) {
 }
 void Show(OBJ* ob, int dx, int dy) {
 
-    if(ob->y == ROWS/2) { //Gdy zaba znajduje sie w safe area
+    if(ob->y == ob->win->rows/2) { //Gdy zaba znajduje sie w safe area
         wattron(ob->win->window, COLOR_PAIR(SAFE_AREA));
         mvwprintw(ob->win->window, ob->y, ob->x,"-");
         wattroff(ob->win->window, COLOR_PAIR(SAFE_AREA));
@@ -222,7 +221,7 @@ void resetFrogAfterCollision(OBJ* ob) {
 //***** OBSTACLE FUNCTIONS ******
 //*******************************
 
-void PrintObstacle(OBJ *ob) {
+void PrintObstacle(Obstacles *ob) {
         for (int i = 0; i<ob->width; i++) {
             wattron(ob->win->window, COLOR_PAIR(ob->color));
             mvwprintw(ob->win->window, ob->y, ob->x + i, "X");
@@ -232,94 +231,92 @@ void PrintObstacle(OBJ *ob) {
     wrefresh(ob->win->window);  // Odśwież okno, aby pokazać zmiany
 }
 
-OBJ* InitObstacle(WIN* w, int x, int y, int color) {
-    OBJ* ob = (OBJ*)malloc(sizeof(OBJ));
+int isLineOccupied(Obstacles** obstacles, int y) {
+    for(int i = 0; i<NUM_OBSTACLES; i++) {
+        if(obstacles[i] != NULL && obstacles[i]->y == y) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+Obstacles* InitObstacle(WIN* w, int x, int y, int color) {
+    Obstacles* ob = (Obstacles*)malloc(sizeof(Obstacles));
     if (ob == NULL) {
         fprintf(stderr, "Error creating OBSTACLE.\n");
         exit(EXIT_FAILURE);
     }
-    ob ->color = color;
-    ob ->win = w;
-    ob -> x = x;
-    ob -> y = y;
-    ob->width = (rand() % 13) + 3;
+    ob->win = w;
+    ob->x = x;
+    ob->y = y;
+    ob->color = color;
+    ob->width = (rand()%13) + 3;
     ob->height = 1;
-    ob->xmin = 1;
-    ob->xmax = w->cols-2;
-    ob->ymin = 1;
-    ob->ymax = w->rows-2;
-    ob->speed;
+    ob->speed = SPEED;
+    ob->stop_time = time(NULL);
 
     PrintObstacle(ob);
 
     return ob;
 }
 
-OBJ* obstacle[NUM_OBSTACLES]; // wszytskie przeszkody
+Obstacles** GenerateObstacles(WIN* win, int startY, int safeArea) {
+    Obstacles** obstacles = (Obstacles**)malloc(NUM_OBSTACLES * sizeof(Obstacles*));
+    if (obstacles == NULL) {
+        fprintf(stderr, "Error allocating memory for obstacles.\n");
+        exit(EXIT_FAILURE);
+    }
 
+    for (int i = 0; i < NUM_OBSTACLES; i++) {
+        int x = rand() % (win->cols - 2) + 1;
+        int y = rand() % (win->rows - 2) + 1;
+        while (y == startY || y == 1 || y == safeArea || isLineOccupied(obstacles, y)) {
+            y = rand() % (win->rows - 2) + 1;
+        }
+        obstacles[i] = InitObstacle(win, x, y, OBSTACLE_COLOR);
+    }
 
+    return obstacles;
+}
 
-int CheckCollision(OBJ* frog, OBJ* obstacle) {
-    for(int i = 0; i< obstacle->width; i++) {
-        if(frog->x == obstacle->x + i && frog->y == obstacle->y) {
-            return 1;
+int CheckCollision(OBJ* frog, Obstacles** obstacles) {
+    for (int i = 0; i < NUM_OBSTACLES; i++) {
+        Obstacles* ob = obstacles[i];
+        for (int j = 0; j < ob->width; j++) {
+            if (frog->x == ob->x + j && frog->y == ob->y) {
+                return 1;
+            }
         }
     }
     return 0;
 }
 
-int isLineOccupied(OBJ** obstacle, int y) {
-    for(int i = 0; i<NUM_OBSTACLES; i++) {
-        if(obstacle[i] != NULL && obstacle[i]->y == y) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void GenerateObstacles(WIN* win) {
-    for(int i = 0; i<NUM_OBSTACLES; i++) {
-        // int x = COLS; //Ustawienie przeszkody poza prawa krawedzia
-        int x = rand() % (COLS - 2) + 1;
-        int y = rand() % (ROWS - 2) + 1;
-        while(y == START_Y || y ==1 || y==ROWS/2 || isLineOccupied(obstacle, y)) { //ROWS/2 - safe area
-            y = rand() % (ROWS - 2) + 1;
-        }
-        int speed = SPEED;
-        obstacle[i] = InitObstacle(win, x, y, OBSTACLE_COLOR);
-        obstacle[i]->speed = speed;
-    }
-}
-
-void MoveObstacles(OBJ** obstacle, int numObstacles) {
-    for (int i = 0; i < numObstacles; i++) {
-        if(obstacle[i]->speed == 0) {
+void MoveObstacles(Obstacles** obstacles, int max_rows) {
+    for (int i = 0; i < NUM_OBSTACLES; i++) {
+        Obstacles* ob = obstacles[i];
+        if (ob->speed == 0) {
             continue;
         }
-
-         for(int j = 0; j<obstacle[i]->width; j++) {
-             mvwprintw(obstacle[i]->win->window, obstacle[i]->y, obstacle[i]->x + j, " ");
-         }
-        // Przesuwamy przeszkodę w lewo
-        obstacle[i]->x -= obstacle[i]->speed;
-
-        // Jeśli przeszkoda wychodzi poza lewą krawędź, przenieś ją na prawą stronę
-        if (obstacle[i]->x + obstacle[i]->width < obstacle[i]->xmin) {
-            obstacle[i]->x = obstacle[i]->xmax;  // Nowa pozycja X (po prawej stronie)
-            int newY = rand() % (ROWS - 2)+1; // Losowa pozycja Y
-            while(newY == START_Y || newY ==1 || newY == ROWS/2 || isLineOccupied(obstacle, newY)) {
-                newY = rand() % (ROWS - 2) + 1;
-            }
-            obstacle[i]->y = newY;
+        for (int j = 0; j < ob->width; j++) {
+            mvwprintw(ob->win->window, ob->y, ob->x + j, " ");
         }
+        ob->x -= ob->speed;
 
-        PrintObstacle(obstacle[i]);  // Rysuj przeszkodę w nowej pozycji
+        if (ob->x + ob->width < 1) {
+            ob->x = ob->win->cols - 2;
+            int newY = rand() % (max_rows - 2) + 1;
+            while (newY == START_Y || newY == 1 || newY == max_rows / 2 || isLineOccupied(obstacles, newY)) {
+                newY = rand() % (max_rows - 2) + 1;
+            }
+            ob->y = newY;
+        }
+        PrintObstacle(ob);
     }
-
-    wrefresh(obstacle[0]->win->window);  // Odśwież okno, aby pokazać zmiany
+    wrefresh(obstacles[0]->win->window);
 }
 
-void stopObstacle(OBJ** obstacle, OBJ* frog) {
+
+void stopObstacle(Obstacles** obstacle, OBJ* frog) {
     for(int i = 0; i<NUM_OBSTACLES; i++) {
         if(obstacle[i]->y+1 == frog->y && obstacle[i]->x >= frog->x && obstacle[i]->x < frog->x + frog->width) {
             if(rand()%100 < CHANCE_OF_STOP) {
@@ -350,7 +347,7 @@ void endGame(const char* info, WIN* W) {
     }
 }
 
-void freeMemory(OBJ** obstacle, OBJ* frog, TIMER* timer) {
+void freeMemory(Obstacles** obstacle, OBJ* frog, TIMER* timer) {
     if (frog != NULL) {
         free(frog);
         frog = NULL;
@@ -385,7 +382,7 @@ void DrawLine(WIN* W) {
     }
     for(int i = 1; i<W->cols-1; i++) {
         wattron(W->window, COLOR_PAIR(SAFE_AREA));
-        mvwprintw(W->window, ROWS/2, i, "-");
+        mvwprintw(W->window, W->rows/2, i, "-");
         wattroff(W->window, COLOR_PAIR(SAFE_AREA));
     }
     wrefresh(W->window);
@@ -422,7 +419,7 @@ int LoadScores(const char* filename, Score* scores, int max_scores) {
 void SortScores(Score* scores, int count) {
     for (int i = 0; i<count -1; i++) {
         for(int j = 0; j<count-i-1; j++) {
-            if(scores[j].score > scores[j+1].score) {
+            if(scores[j].score < scores[j+1].score) {
                 Score temp = scores[j];
                 scores[j] = scores[j+1];
                 scores[j+1] = temp;
@@ -442,7 +439,40 @@ void ShowRanking(WINDOW *win, const Score* scores, int count) {
     wgetch(win);
 }
 
-int mainLoop(WIN* status, OBJ* frog, TIMER* timer) {
+void loadSettings(const char* filename, int *lives, int *game_time, int *window_width, int *window_height) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Błąd otwierania pliku: %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+
+    while(!feof(file)) {
+        char key[50];
+        int value;
+        int res = fscanf(file, "%49[^=]=%d\n", key, &value);
+        if(res == 2) {
+            if(strcmp(key, "lives") == 0) {
+                *lives = value;
+            }
+            else if(strcmp(key, "game_time") == 0) {
+                *game_time = value;
+            }
+            else if(strcmp(key, "window_width") == 0) {
+                *window_width = value;
+            }
+            else if(strcmp(key, "window_height") == 0) {
+                *window_height = value;
+            }
+        }
+    }
+    fclose(file);
+}
+
+//*******************************
+//********* MAIN LOOP ***********
+//*******************************
+
+int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles) {
     int ch;
 
     while((ch = wgetch(status->window)) != QUIT) {
@@ -458,7 +488,7 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer) {
         }
 
         for(int i = 0; i<NUM_OBSTACLES; i++) {
-            if(CheckCollision(frog, obstacle[i])){
+            if(CheckCollision(frog, obstacles)) {
                 frog->life -= 1;
 
                 if(frog->life == 0) {
@@ -469,10 +499,10 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer) {
             }
         }
 
-        MoveObstacles(obstacle, NUM_OBSTACLES);
-        stopObstacle(obstacle, frog);
+        MoveObstacles(obstacles, frog->win->rows);
+        stopObstacle(obstacles, frog);
 
-        if (UpdateTimer(timer, status, frog)) {
+        if (UpdateTimer(timer, status, frog, PASS_TIME)) {
             usleep(FRAME_TIME * 1000);
             return 1;
         }
@@ -481,54 +511,74 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer) {
     return 0;
 }
 
-void endGameFile() {
+void endGameFile(TIMER* timer, WINDOW* mainwin,OBJ* frog, char player_name[]) {
+    const char* score_file = "ranikng.txt";
+    Score scores[100];
+
+    if ((int)timer->pass_time >= 0 && frog->life > 0) {
+        SaveScore(score_file, player_name, (int)timer->pass_time);
+        int score_count = LoadScores(score_file, scores, 100);
+        if (score_count > 0) {
+            SortScores(scores, score_count);
+            ShowRanking(mainwin, scores, score_count);
+        }else {
+            printf("There is no scores left!");
+        }
+    }
+    else if((int)timer->pass_time>=0 && frog->life == 0) {
+        SaveScore(score_file, player_name, 0);
+        int score_count = LoadScores(score_file, scores, 100);
+        if (score_count > 0) {
+            SortScores(scores, score_count);
+            ShowRanking(mainwin, scores, score_count);
+        }else {
+            printf("There is no scores left!");
+        }
+    }
 
 }
 
 
 // Główna funkcja
 int main() {
+    srand(time(NULL));
     char player_name[50];
     WINDOW* mainwin = Start();
     StartWin(mainwin, player_name, sizeof(player_name));
 
-    WIN* playwin = Init(mainwin, ROWS, COLS, OFFY, OFFX, MAIN_COLOR, BORDER, DELAY_ON); // Gra
-    WIN* statwin = Init(mainwin, 3, COLS, ROWS + OFFY, OFFX, STAT_COLOR, BORDER, DELAY_OFF); // Status
+    int lives, game_time, window_width, window_height;
+    loadSettings("ustawienia.txt", &lives, &game_time, &window_width, &window_height);
 
-    TIMER* timer = InitTimer(statwin);
+    WIN* playwin = Init(mainwin, window_height, window_width, OFFY, OFFX, MAIN_COLOR, BORDER, DELAY_ON); // Gra
+    WIN* statwin = Init(mainwin, 3, window_width, window_height + OFFY, OFFX, STAT_COLOR, BORDER, DELAY_OFF); // Status
 
-    OBJ* frog = InitFrog(playwin, FROG_COLOR);
-    GenerateObstacles(playwin);
+    TIMER* timer = InitTimer(statwin, game_time);
+
+    OBJ* frog = InitFrog(playwin, FROG_COLOR, lives);
+
+    Obstacles** obstacles = GenerateObstacles(playwin, START_Y, playwin->rows/2);
 
     DrawLine(playwin);
 
-    int result = mainLoop(statwin, frog, timer);
+    int result = mainLoop(statwin, frog, timer, game_time, obstacles);
 
     if (result == 0) { // Gra zakończona przez gracza
         endGame(" ", statwin);
     } else if (result == 1) { // Gra zakończona przez upłynięcie czasu
         endGame("Time is up! Game over.", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
     } else if (result == 2) {
         endGame("You win!", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
     } else if(result == 3) {
         endGame("The frog was run over!", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
     }
 
-    const char* score_file = "ranikng.txt";
-
-    Score scores[100];
-    SaveScore(score_file, player_name, (int)timer->pass_time);
-    int score_count = LoadScores(score_file, scores, 100);
-    if (score_count > 0) {
-        SortScores(scores, score_count);
-        ShowRanking(mainwin, scores, score_count);
-    }else {
-        printf("There is no scores left!");
-    }
 
 
     // Sprzątanie po grze
-    freeMemory(obstacle, frog, timer);
+    freeMemory(obstacles, frog, timer);
     freeWin(playwin);
     freeWin(statwin);
     delwin(mainwin);

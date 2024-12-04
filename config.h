@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ncurses.h>
+#include <cstring>
 #include <time.h>  // Zawiera funkcję clock()
 
 #define MAIN_COLOR 1
@@ -24,19 +25,18 @@
 #define BORDER 1
 #define DELAY_ON 1
 
-#define ROWS 27
-#define COLS 75
+
 #define OFFY 0
 #define OFFX 8
 
 #define FRAME_TIME 25 // Czas trwania jednej klatki w milisekundach
-#define PASS_TIME 60  // Czas na zegarze w sekundach (np. 60 sekund)
 
-#define START_X COLS/2
-#define START_Y ROWS -2
+
+#define START_X 37
+#define START_Y 25
 #define NUM_OBSTACLES 5
-#define LIFE 4
-#define TIME_BETWEEN_JUMPS 0
+
+#define TIME_BETWEEN_JUMPS 0.01
 #define CHANCE_OF_STOP 50
 #define SPEED rand()%2+1
 
@@ -75,5 +75,16 @@ typedef struct {
     char name[50];
     int score;
 } Score;
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    int color;
+    int speed;
+    time_t stop_time;
+    WIN* win;
+}Obstacles;
 
 #endif //CONFIG_H

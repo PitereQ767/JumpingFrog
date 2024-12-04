@@ -1,0 +1,4 @@
+lives=2
+game_time=60
+window_width=75
+window_height=27
