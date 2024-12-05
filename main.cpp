@@ -21,6 +21,7 @@ WINDOW* Start() {
     init_pair(OBSTACLE_COLOR, COLOR_RED, COLOR_RED);
     init_pair(SAFE_AREA, COLOR_WHITE, COLOR_WHITE);
     init_pair(FINISH_LINE, COLOR_BLACK, COLOR_WHITE);
+    init_pair(HOLE_COLOR, COLOR_CYAN, COLOR_CYAN);
 
     noecho();
     curs_set(0);
@@ -196,8 +197,8 @@ void Show(OBJ* ob, int dx, int dy) {
 }
 
 void moveFrog(OBJ* ob, char ch) {
-    time_t current_time = time(NULL);
-    if (difftime(current_time, ob->last_jump) >= TIME_BETWEEN_JUMPS) {
+    clock_t current_time = clock(); //mikrosekundy
+    if ((current_time - ob->last_jump) >= TIME_BETWEEN_JUMPS) {
 
         switch (ch) {
             case 'w': Show(ob, 0, -1); break;
@@ -218,22 +219,87 @@ void resetFrogAfterCollision(OBJ* ob) {
 }
 
 //*******************************
+//******* Hole FUNCTIONS ********
+//*******************************
+
+void PrintHole(Holes *hole) {
+    for(int i=0; i<hole->height; i++) {
+        for(int j=0; j<hole->width; j++) {
+            wattron(hole->win->window, COLOR_PAIR(hole->color));
+            mvwprintw(hole->win->window, hole->y+i, hole->x + j, "H");
+            wattroff(hole->win->window, COLOR_PAIR(hole->color));
+        }
+    }
+}
+
+Holes* InitHole(WIN* w, int x, int y, int color) {
+    Holes* hole = (Holes*)malloc(sizeof(Holes));
+    if (hole == NULL) {
+        fprintf(stderr, "Error creating HOLE.\n");
+        exit(EXIT_FAILURE);
+    }
+    hole->win = w;
+    hole->x = x;
+    hole->y = y;
+    hole->color = color;
+    hole->width = 2;
+    hole->height = 2;
+
+    PrintHole(hole);
+
+    return hole;
+}
+
+Holes** GenerateHoles(WIN* win, int safeArea) {
+    Holes** holes = (Holes**)malloc(NUM_HOLES * sizeof(Holes*));
+    if (holes == NULL) {
+        fprintf(stderr, "Error allocating memory for obstacles.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < NUM_HOLES; i++) {
+        int x = rand() % (win->cols - 3) + 1;
+        int y = rand() % (win->rows - 2) + 1;
+        while (y == START_Y || y == 1 || y == safeArea || y == safeArea - 1 || y==START_Y-1) {
+            y = rand() % (win->rows - 2) + 1;
+        }
+        holes[i] = InitHole(win, x, y, HOLE_COLOR);
+    }
+
+    return holes;
+}
+
+int FrogInHole(OBJ* frog, Holes** holes) {
+    for(int i=0; i<NUM_HOLES; i++) {
+        Holes* hole = holes[i];
+        for(int j=0; j<hole->width; j++) {
+            for(int z=0; z<hole->height; z++) {
+                if (frog->x == hole->x + j && frog->y == hole->y+z) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+//*******************************
 //***** OBSTACLE FUNCTIONS ******
 //*******************************
 
-void PrintObstacle(Obstacles *ob) {
-        for (int i = 0; i<ob->width; i++) {
-            wattron(ob->win->window, COLOR_PAIR(ob->color));
-            mvwprintw(ob->win->window, ob->y, ob->x + i, "X");
-            wattroff(ob->win->window, COLOR_PAIR(ob->color)); // Wyłączamy kolor
+void PrintObstacle(Obstacles *obstacle) {
+        for (int i = 0; i<obstacle->width; i++) {
+            wattron(obstacle->win->window, COLOR_PAIR(obstacle->color));
+            mvwprintw(obstacle->win->window, obstacle->y, obstacle->x + i, "X");
+            wattroff(obstacle->win->window, COLOR_PAIR(obstacle->color)); // Wyłączamy kolor
         }
-    box(ob->win->window, 0, 0); // Samochody nie nadpisuja ramki
-    wrefresh(ob->win->window);  // Odśwież okno, aby pokazać zmiany
+    box(obstacle->win->window, 0, 0); // Samochody nie nadpisuja ramki
+    wrefresh(obstacle->win->window);  // Odśwież okno, aby pokazać zmiany
 }
 
-int isLineOccupied(Obstacles** obstacles, int y) {
+int isLineOccupied(Obstacles** obstacle, int y) {
     for(int i = 0; i<NUM_OBSTACLES; i++) {
-        if(obstacles[i] != NULL && obstacles[i]->y == y) {
+        if(obstacle[i] != NULL && obstacle[i]->y == y) {
             return 1;
         }
     }
@@ -241,26 +307,26 @@ int isLineOccupied(Obstacles** obstacles, int y) {
 }
 
 Obstacles* InitObstacle(WIN* w, int x, int y, int color) {
-    Obstacles* ob = (Obstacles*)malloc(sizeof(Obstacles));
-    if (ob == NULL) {
+    Obstacles* obstacle = (Obstacles*)malloc(sizeof(Obstacles));
+    if (obstacle == NULL) {
         fprintf(stderr, "Error creating OBSTACLE.\n");
         exit(EXIT_FAILURE);
     }
-    ob->win = w;
-    ob->x = x;
-    ob->y = y;
-    ob->color = color;
-    ob->width = (rand()%13) + 3;
-    ob->height = 1;
-    ob->speed = SPEED;
-    ob->stop_time = time(NULL);
+    obstacle->win = w;
+    obstacle->x = x;
+    obstacle->y = y;
+    obstacle->color = color;
+    obstacle->width = (rand()%13) + 3;
+    obstacle->height = 1;
+    obstacle->speed = SPEED;
+    obstacle->stop_time = time(NULL);
 
-    PrintObstacle(ob);
+    PrintObstacle(obstacle);
 
-    return ob;
+    return obstacle;
 }
 
-Obstacles** GenerateObstacles(WIN* win, int startY, int safeArea) {
+Obstacles** GenerateObstacles(WIN* win, int safeArea) {
     Obstacles** obstacles = (Obstacles**)malloc(NUM_OBSTACLES * sizeof(Obstacles*));
     if (obstacles == NULL) {
         fprintf(stderr, "Error allocating memory for obstacles.\n");
@@ -270,7 +336,7 @@ Obstacles** GenerateObstacles(WIN* win, int startY, int safeArea) {
     for (int i = 0; i < NUM_OBSTACLES; i++) {
         int x = rand() % (win->cols - 2) + 1;
         int y = rand() % (win->rows - 2) + 1;
-        while (y == startY || y == 1 || y == safeArea || isLineOccupied(obstacles, y)) {
+        while (y == START_Y || y == 1 || y == safeArea || isLineOccupied(obstacles, y)) {
             y = rand() % (win->rows - 2) + 1;
         }
         obstacles[i] = InitObstacle(win, x, y, OBSTACLE_COLOR);
@@ -291,26 +357,29 @@ int CheckCollision(OBJ* frog, Obstacles** obstacles) {
     return 0;
 }
 
-void MoveObstacles(Obstacles** obstacles, int max_rows) {
+void MoveObstacles(Obstacles** obstacles, int max_rows,Holes** holes) {
     for (int i = 0; i < NUM_OBSTACLES; i++) {
-        Obstacles* ob = obstacles[i];
-        if (ob->speed == 0) {
-            continue;
+        Obstacles* obstacle = obstacles[i];
+        // if (obstacle->speed == 0) {
+        //     continue;
+        // }
+        for (int j = 0; j < obstacle->width; j++) {
+            mvwprintw(obstacle->win->window, obstacle->y, obstacle->x + j, " ");
         }
-        for (int j = 0; j < ob->width; j++) {
-            mvwprintw(ob->win->window, ob->y, ob->x + j, " ");
-        }
-        ob->x -= ob->speed;
+        obstacle->x -= obstacle->speed;
 
-        if (ob->x + ob->width < 1) {
-            ob->x = ob->win->cols - 2;
+        if (obstacle->x + obstacle->width < 1) {
+            obstacle->x = obstacle->win->cols - 2;
             int newY = rand() % (max_rows - 2) + 1;
             while (newY == START_Y || newY == 1 || newY == max_rows / 2 || isLineOccupied(obstacles, newY)) {
                 newY = rand() % (max_rows - 2) + 1;
             }
-            ob->y = newY;
+            obstacle->y = newY;
         }
-        PrintObstacle(ob);
+        PrintObstacle(obstacle);
+    }
+    for(int i= 0; i < NUM_HOLES; i++) {
+        PrintHole(holes[i]);
     }
     wrefresh(obstacles[0]->win->window);
 }
@@ -332,6 +401,8 @@ void stopObstacle(Obstacles** obstacle, OBJ* frog) {
         }
     }
 }
+
+
 
 
 //*******************************
@@ -472,7 +543,7 @@ void loadSettings(const char* filename, int *lives, int *game_time, int *window_
 //********* MAIN LOOP ***********
 //*******************************
 
-int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles) {
+int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles, Holes** holes) {
     int ch;
 
     while((ch = wgetch(status->window)) != QUIT) {
@@ -499,8 +570,23 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** ob
             }
         }
 
-        MoveObstacles(obstacles, frog->win->rows);
+        for(int i = 0; i<NUM_HOLES; i++) {
+            if(FrogInHole(frog, holes)) {
+                frog->life -= 1;
+                if(frog->life == 0) {
+                    return 3;
+                }
+                resetFrogAfterCollision(frog);
+                wrefresh(status->window);
+            }
+        }
+
+        MoveObstacles(obstacles, frog->win->rows, holes);
         stopObstacle(obstacles, frog);
+
+        for(int i = 0; i<NUM_HOLES; i++) {
+            PrintHole(holes[i]);
+        }
 
         if (UpdateTimer(timer, status, frog, PASS_TIME)) {
             usleep(FRAME_TIME * 1000);
@@ -556,11 +642,13 @@ int main() {
 
     OBJ* frog = InitFrog(playwin, FROG_COLOR, lives);
 
-    Obstacles** obstacles = GenerateObstacles(playwin, START_Y, playwin->rows/2);
+    Holes** holes = GenerateHoles(playwin, playwin->rows/2);
+    Obstacles** obstacles = GenerateObstacles(playwin, playwin->rows/2);
+
 
     DrawLine(playwin);
 
-    int result = mainLoop(statwin, frog, timer, game_time, obstacles);
+    int result = mainLoop(statwin, frog, timer, game_time, obstacles, holes);
 
     if (result == 0) { // Gra zakończona przez gracza
         endGame(" ", statwin);

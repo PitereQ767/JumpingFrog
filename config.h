@@ -17,6 +17,7 @@
 #define OBSTACLE_COLOR 4
 #define SAFE_AREA 5
 #define FINISH_LINE 6
+#define HOLE_COLOR 7
 
 #define QUIT 'q'
 #define NOKEY ' '
@@ -35,10 +36,11 @@
 #define START_X 37
 #define START_Y 25
 #define NUM_OBSTACLES 5
+#define NUM_HOLES 7
 
-#define TIME_BETWEEN_JUMPS 0.01
+#define TIME_BETWEEN_JUMPS 100 //w mikrosekundach
 #define CHANCE_OF_STOP 50
-#define SPEED rand()%2+1
+#define SPEED rand()%2 + 1
 
 
 
@@ -67,8 +69,7 @@ typedef struct {
     int ymin, ymax;
     int speed;
     int life;
-    int last_jump;
-    time_t stop_time;
+    clock_t last_jump;
 } OBJ;
 
 typedef struct {
@@ -86,5 +87,14 @@ typedef struct {
     time_t stop_time;
     WIN* win;
 }Obstacles;
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    int color;
+    WIN* win;
+}Holes;
 
 #endif //CONFIG_H
