@@ -18,6 +18,7 @@
 #define SAFE_AREA 5
 #define FINISH_LINE 6
 #define HOLE_COLOR 7
+#define FRIENDLY_CAR_COLOR 8
 
 #define QUIT 'q'
 #define NOKEY ' '
@@ -37,10 +38,13 @@
 #define START_Y 25
 #define NUM_OBSTACLES 5
 #define NUM_HOLES 7
+#define NUM_FRIENDLY_CAR 2
 
 #define TIME_BETWEEN_JUMPS 100 //w mikrosekundach
 #define CHANCE_OF_STOP 50
 #define SPEED rand()%2 + 1
+
+#define MAX_SCORES 100
 
 
 
@@ -96,5 +100,15 @@ typedef struct {
     int color;
     WIN* win;
 }Holes;
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    int color;
+    int speed;
+    WIN* win;
+}FriendlyCars;
 
 #endif //CONFIG_H

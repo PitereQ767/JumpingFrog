@@ -22,6 +22,7 @@ WINDOW* Start() {
     init_pair(SAFE_AREA, COLOR_WHITE, COLOR_WHITE);
     init_pair(FINISH_LINE, COLOR_BLACK, COLOR_WHITE);
     init_pair(HOLE_COLOR, COLOR_CYAN, COLOR_CYAN);
+    init_pair(FRIENDLY_CAR_COLOR, COLOR_YELLOW, COLOR_YELLOW);
 
     noecho();
     curs_set(0);
@@ -294,7 +295,6 @@ void PrintObstacle(Obstacles *obstacle) {
             wattroff(obstacle->win->window, COLOR_PAIR(obstacle->color)); // Wyłączamy kolor
         }
     box(obstacle->win->window, 0, 0); // Samochody nie nadpisuja ramki
-    wrefresh(obstacle->win->window);  // Odśwież okno, aby pokazać zmiany
 }
 
 int isLineOccupied(Obstacles** obstacle, int y) {
@@ -402,6 +402,110 @@ void stopObstacle(Obstacles** obstacle, OBJ* frog) {
     }
 }
 
+//*******************************
+//*** FRIENDLY CAR FUNCTIONS ****
+//*******************************
+void PrintCar(FriendlyCars* car) {
+    for (int i = 0; i<car->width; i++) {
+        wattron(car->win->window, COLOR_PAIR(car->color));
+        mvwprintw(car->win->window, car->y, car->x+i, "F");
+        wattroff(car->win->window, COLOR_PAIR(car->color));
+    }
+
+    box(car->win->window, 0, 0);
+}
+
+int isLineOccupiedByFriendlyCar(FriendlyCars** cars, int y) {
+    for(int i = 0; i<NUM_FRIENDLY_CAR; i++) {
+        if(cars[i] != NULL && cars[i]->y == y) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void MoveFrogToNewLocation(OBJ* frog) {
+    int newX = rand()% (frog->win->cols - 2) + 1;
+    int newY = rand()% (frog->win->rows - 2) + 1;
+
+    while(newY == 1 || newY == frog->y || newX == frog->x) {
+        newX = rand()% (frog->win->cols - 2) + 1;
+        newY = rand()% (frog->win->rows - 2) + 1;
+    }
+    frog->x = newX;
+    frog->y = newY;
+    PrintFrog(frog);
+}
+
+FriendlyCars* InitFriendlyCar(WIN* w, int x, int y, int color) {
+    FriendlyCars* car = (FriendlyCars*)malloc(sizeof(FriendlyCars));
+
+    if (car == NULL) {
+        fprintf(stderr, "Error allocating memory for friendly cars.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    car->win = w;
+    car->color = color;
+    car->speed = 1;
+    car->x = x;
+    car->y = y;
+    car->width = 5;
+    car->height = 1;
+
+    PrintCar(car);
+    return car;
+}
+
+FriendlyCars** GenerateFriendlyCars(WIN* win, int safeArea) {
+    FriendlyCars** cars = (FriendlyCars**)malloc(sizeof(FriendlyCars*)* NUM_FRIENDLY_CAR);
+    if (cars == NULL) {
+        fprintf(stderr, "Error allocating memory for friendly cars.\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < NUM_FRIENDLY_CAR; i++) {
+        int x = rand() % (win->cols - 2) + 1;
+        int y = rand() % (win->rows - 2) + 1;
+        while (y == START_Y || y == 1 || y == safeArea || isLineOccupiedByFriendlyCar(cars, y)) {
+            y = rand() % (win->rows - 2) + 1;
+        }
+        cars[i] = InitFriendlyCar(win, x, y, FRIENDLY_CAR_COLOR);
+    }
+
+    return cars;
+}
+
+void MoveFriendlyCars(FriendlyCars** cars, int max_rows, Holes** holes, OBJ* frog, int* key) {
+    for (int i = 0; i < NUM_FRIENDLY_CAR; i++) {
+        FriendlyCars* car = cars[i];
+
+        if (car->x <= frog->x + frog->width && car->x + car->width >= frog->x && car->y == frog->y) {
+            if (*key == 'z') {
+                MoveFrogToNewLocation(frog);
+            }
+        }
+        for (int j = 0; j < car->width; j++) {
+            mvwprintw(car->win->window, car->y, car->x + j, " ");
+        }
+        car->x -= car->speed;
+
+        if (car->x + car->width < 1) {
+            car->x = car->win->cols - 2;
+            int newY = rand() % (max_rows - 2) + 1;
+            while (newY == START_Y || newY == 1 || newY == max_rows / 2 || isLineOccupiedByFriendlyCar(cars, newY)) {
+                newY = rand() % (max_rows - 2) + 1;
+            }
+            car->y = newY;
+        }
+        PrintCar(car);
+    }
+    for(int i= 0; i < NUM_HOLES; i++) {
+        PrintHole(holes[i]);
+    }
+    PrintFrog(frog);
+    wrefresh(cars[0]->win->window);
+}
+
 
 
 
@@ -409,7 +513,7 @@ void stopObstacle(Obstacles** obstacle, OBJ* frog) {
 //******* GAME FUNCTIONS ********
 //*******************************
 
-void endGame(const char* info, WIN* W) {
+void EndGameStat(const char* info, WIN* W) {
     CleanWin(W, 1);
     for(int i = 3; i>0; i--) {
         mvwprintw(W->window, 1, 2, "%s Closing the game in %d seconds...", info, i);
@@ -418,16 +522,22 @@ void endGame(const char* info, WIN* W) {
     }
 }
 
-void freeMemory(Obstacles** obstacle, OBJ* frog, TIMER* timer) {
+void freeMemory(Obstacles** obstacle, OBJ* frog, TIMER* timer, Holes** holes) {
     if (frog != NULL) {
         free(frog);
         frog = NULL;
     }
     for(int i = 0; i < NUM_OBSTACLES; i++) {
         if (obstacle[i] != NULL) {
-            delwin(obstacle[i]->win->window);
             free(obstacle[i]);
             obstacle[i] = NULL;
+        }
+    }
+
+    for(int i = 0; i < NUM_HOLES; i++) {
+        if (holes[i] != NULL) {
+            free(holes[i]);
+            holes[i] = NULL;
         }
     }
 
@@ -543,8 +653,9 @@ void loadSettings(const char* filename, int *lives, int *game_time, int *window_
 //********* MAIN LOOP ***********
 //*******************************
 
-int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles, Holes** holes) {
+int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles, Holes** holes, FriendlyCars** cars) {
     int ch;
+    int key = 0;
 
     while((ch = wgetch(status->window)) != QUIT) {
         if (ch == ERR) {
@@ -552,6 +663,12 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** ob
         }
         else {
             moveFrog(frog, ch);
+        }
+
+        if(ch == 'z') {
+            key = 'z';
+        }else {
+            key = 0;
         }
 
         if(frog->y == 1) {
@@ -583,6 +700,7 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** ob
 
         MoveObstacles(obstacles, frog->win->rows, holes);
         stopObstacle(obstacles, frog);
+        MoveFriendlyCars(cars, frog->win->rows, holes, frog, &key);
 
         for(int i = 0; i<NUM_HOLES; i++) {
             PrintHole(holes[i]);
@@ -603,7 +721,7 @@ void endGameFile(TIMER* timer, WINDOW* mainwin,OBJ* frog, char player_name[]) {
 
     if ((int)timer->pass_time >= 0 && frog->life > 0) {
         SaveScore(score_file, player_name, (int)timer->pass_time);
-        int score_count = LoadScores(score_file, scores, 100);
+        int score_count = LoadScores(score_file, scores, MAX_SCORES);
         if (score_count > 0) {
             SortScores(scores, score_count);
             ShowRanking(mainwin, scores, score_count);
@@ -613,7 +731,7 @@ void endGameFile(TIMER* timer, WINDOW* mainwin,OBJ* frog, char player_name[]) {
     }
     else if((int)timer->pass_time>=0 && frog->life == 0) {
         SaveScore(score_file, player_name, 0);
-        int score_count = LoadScores(score_file, scores, 100);
+        int score_count = LoadScores(score_file, scores, MAX_SCORES);
         if (score_count > 0) {
             SortScores(scores, score_count);
             ShowRanking(mainwin, scores, score_count);
@@ -622,6 +740,21 @@ void endGameFile(TIMER* timer, WINDOW* mainwin,OBJ* frog, char player_name[]) {
         }
     }
 
+}
+
+void endGame(int result, TIMER* timer, OBJ* frog, WINDOW* mainwin, WIN* statwin, char player_name[]) {
+    if (result == 0) { // Gra zakończona przez gracza
+        EndGameStat(" ", statwin);
+    } else if (result == 1) { // Gra zakończona przez upłynięcie czasu
+        EndGameStat("Time is up! Game over.", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
+    } else if (result == 2) {
+        EndGameStat("You win!", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
+    } else if(result == 3) {
+        EndGameStat("The frog was run over!", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
+    }
 }
 
 
@@ -644,29 +777,17 @@ int main() {
 
     Holes** holes = GenerateHoles(playwin, playwin->rows/2);
     Obstacles** obstacles = GenerateObstacles(playwin, playwin->rows/2);
+    FriendlyCars** cars = GenerateFriendlyCars(playwin, playwin->rows/2);
 
 
     DrawLine(playwin);
 
-    int result = mainLoop(statwin, frog, timer, game_time, obstacles, holes);
-
-    if (result == 0) { // Gra zakończona przez gracza
-        endGame(" ", statwin);
-    } else if (result == 1) { // Gra zakończona przez upłynięcie czasu
-        endGame("Time is up! Game over.", statwin);
-        endGameFile(timer, mainwin, frog, player_name);
-    } else if (result == 2) {
-        endGame("You win!", statwin);
-        endGameFile(timer, mainwin, frog, player_name);
-    } else if(result == 3) {
-        endGame("The frog was run over!", statwin);
-        endGameFile(timer, mainwin, frog, player_name);
-    }
-
+    int result = mainLoop(statwin, frog, timer, game_time, obstacles, holes, cars);
+    endGame(result, timer, frog, mainwin, statwin, player_name);
 
 
     // Sprzątanie po grze
-    freeMemory(obstacles, frog, timer);
+    freeMemory(obstacles, frog, timer, holes);
     freeWin(playwin);
     freeWin(statwin);
     delwin(mainwin);

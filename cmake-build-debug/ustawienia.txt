@@ -1,4 +1,4 @@
 lives=4
-game_time=30
+game_time=60
 window_width=75
 window_height=27

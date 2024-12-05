@@ -3718,9 +3718,9 @@ extern "C" {
 }
 # 324 "C:/msys64/mingw64/include/time.h" 2 3
 # 13 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/config.h" 2
-# 48 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/config.h"
+# 52 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/config.h"
 
-# 48 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/config.h"
+# 52 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/config.h"
 typedef struct {
     WINDOW* window;
     int x, y;
@@ -3772,6 +3772,16 @@ typedef struct {
     int color;
     WIN* win;
 }Holes;
+
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    int color;
+    int speed;
+    WIN* win;
+}FriendlyCars;
 # 2 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 2
 
 
@@ -3864,6 +3874,15 @@ WINDOW* Start() {
                                      6
 # 24 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                );
+    init_pair(8, 
+# 25 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+                                 3
+# 25 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                                             , 
+# 25 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+                                               3
+# 25 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                                                           );
 
     noecho();
     curs_set(0);
@@ -3874,17 +3893,17 @@ WINDOW* Start() {
 void CleanWin(WIN* W, int bo ) {
     int i, j;
     
-# 34 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 35 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    wattr_on(
-# 34 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 35 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    W->window
-# 34 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 35 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    , static_cast<attr_t>(((static_cast<chtype>(((
-# 34 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 35 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    W->color
-# 34 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 35 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 34 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 35 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                            ;
     if(bo) box(W->window, 0, 0);
     for (i = bo; i < W->rows - bo; i++) {
@@ -3898,19 +3917,19 @@ void CleanWin(WIN* W, int bo ) {
 WIN* Init(WINDOW* parent, int rows, int cols, int y, int x, int color, int border, int delay) {
     WIN* W = (WIN*)malloc(sizeof(WIN));
     if (W == 
-# 46 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 47 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
             __null
-# 46 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 47 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                 ) {
         fprintf(
-# 47 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 48 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 47 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 48 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Error creating WINDOW.\n");
         exit(
-# 48 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 49 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 48 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 49 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
     W->x = x;
@@ -3920,26 +3939,26 @@ WIN* Init(WINDOW* parent, int rows, int cols, int y, int x, int color, int borde
     W->color = color;
     W->window = subwin(parent, rows, cols, y, x);
     if(W->window == 
-# 56 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 57 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                    __null
-# 56 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 57 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                        ) {
         fprintf(
-# 57 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 58 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 57 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 58 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Error creating subwindow.\n");
         exit(
-# 58 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 59 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 58 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 59 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
     CleanWin(W, border);
     if (delay == 0) nodelay(W->window, 
-# 61 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 62 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                                               1
-# 61 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 62 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                   );
     wrefresh(W->window);
     return W;
@@ -3948,54 +3967,54 @@ WIN* Init(WINDOW* parent, int rows, int cols, int y, int x, int color, int borde
 
 void StartWin(WINDOW* win, char* player_name, int max_len) {
     
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    (wmove((
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    win
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),(
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    1
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),(
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    1
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    )) == (-1) ? (-1) : waddnstr((
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    win
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),(
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    "Welcome to JumpingFrog!"
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),-1))
-# 68 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                   ;
     
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    (wmove((
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    win
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),(
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    2
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),(
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    1
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    )) == (-1) ? (-1) : waddnstr((
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    win
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),(
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    "Enter your name: "
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ),-1))
-# 69 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 70 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                             ;
     wrefresh(win);
     echo();
@@ -4032,19 +4051,19 @@ void ShowTimer(WIN* W, float pass_time, int life) {
 TIMER* InitTimer(WIN* status, int PASS_TIME) {
     TIMER* timer = (TIMER*)malloc(sizeof(TIMER));
     if (timer == 
-# 104 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 105 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                 __null
-# 104 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 105 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                     ) {
         fprintf(
-# 105 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 106 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 105 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 106 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Error creating TIMER.\n");
         exit(
-# 106 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 107 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 106 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 107 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
     timer->frame_no = 1;
@@ -4085,31 +4104,31 @@ int UpdateTimer(TIMER* T, WIN* status, OBJ* ob, int PASS_TIME) {
 
 void PrintFrog(OBJ* ob){
     
-# 145 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 146 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    wattr_on(
-# 145 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 146 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    ob->win->window
-# 145 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 146 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    , static_cast<attr_t>(((static_cast<chtype>(((
-# 145 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 146 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    ob->color
-# 145 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 146 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 145 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 146 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                   ;
     mvwprintw(ob->win->window, ob->y, ob->x, "F");
     
-# 147 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 148 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    wattr_off(
-# 147 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 148 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    ob->win->window
-# 147 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 148 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    , static_cast<attr_t>(((static_cast<chtype>(((
-# 147 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 148 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
    ob->color
-# 147 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 148 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
    ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 147 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 148 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                    ;
     wrefresh(ob->win->window);
 }
@@ -4117,19 +4136,19 @@ void PrintFrog(OBJ* ob){
 OBJ* InitFrog(WIN* w, int col, int lives) {
     OBJ* ob = (OBJ*)malloc(sizeof(OBJ));
     if (ob == 
-# 153 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 154 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
              __null
-# 153 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 154 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                  ) {
         fprintf(
-# 154 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 155 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 154 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 155 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Error creating FROG.\n");
         exit(
-# 155 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 156 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 155 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 156 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
     ob ->color = col;
@@ -4145,9 +4164,9 @@ OBJ* InitFrog(WIN* w, int col, int lives) {
     ob->ymax = w->rows-2;
     ob->life = lives;
     ob->last_jump = time(
-# 169 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 170 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                         __null
-# 169 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 170 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                             );
 
     PrintFrog(ob);
@@ -4157,31 +4176,31 @@ void Show(OBJ* ob, int dx, int dy) {
 
     if(ob->y == ob->win->rows/2) {
         
-# 177 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 178 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        wattr_on(
-# 177 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 178 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        ob->win->window
-# 177 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 178 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        , static_cast<attr_t>(((static_cast<chtype>(((
-# 177 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 178 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        5
-# 177 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 178 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 177 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 178 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                       ;
         mvwprintw(ob->win->window, ob->y, ob->x,"-");
         
-# 179 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 180 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        wattr_off(
-# 179 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 180 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        ob->win->window
-# 179 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 180 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        , static_cast<attr_t>(((static_cast<chtype>(((
-# 179 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 180 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        5
-# 179 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 180 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 179 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 180 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                        ;
     }else {
 
@@ -4232,31 +4251,31 @@ void PrintHole(Holes *hole) {
     for(int i=0; i<hole->height; i++) {
         for(int j=0; j<hole->width; j++) {
             
-# 228 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 229 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            wattr_on(
-# 228 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 229 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            hole->win->window
-# 228 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 229 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            , static_cast<attr_t>(((static_cast<chtype>(((
-# 228 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 229 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            hole->color
-# 228 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 229 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 228 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 229 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                               ;
             mvwprintw(hole->win->window, hole->y+i, hole->x + j, "H");
             
-# 230 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 231 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            wattr_off(
-# 230 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 231 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            hole->win->window
-# 230 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 231 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            , static_cast<attr_t>(((static_cast<chtype>(((
-# 230 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 231 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            hole->color
-# 230 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 231 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 230 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 231 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                                ;
         }
     }
@@ -4265,19 +4284,19 @@ void PrintHole(Holes *hole) {
 Holes* InitHole(WIN* w, int x, int y, int color) {
     Holes* hole = (Holes*)malloc(sizeof(Holes));
     if (hole == 
-# 237 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 238 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 237 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 238 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ) {
         fprintf(
-# 238 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 239 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 238 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 239 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Error creating HOLE.\n");
         exit(
-# 239 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 240 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 239 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 240 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
     hole->win = w;
@@ -4295,19 +4314,19 @@ Holes* InitHole(WIN* w, int x, int y, int color) {
 Holes** GenerateHoles(WIN* win, int safeArea) {
     Holes** holes = (Holes**)malloc(7 * sizeof(Holes*));
     if (holes == 
-# 255 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 256 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                 __null
-# 255 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 256 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                     ) {
         fprintf(
-# 256 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 257 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 256 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 257 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Error allocating memory for obstacles.\n");
         exit(
-# 257 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 258 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 257 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 258 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
 
@@ -4344,35 +4363,34 @@ int FrogInHole(OBJ* frog, Holes** holes) {
 void PrintObstacle(Obstacles *obstacle) {
         for (int i = 0; i<obstacle->width; i++) {
             
-# 292 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 293 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            wattr_on(
-# 292 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 293 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            obstacle->win->window
-# 292 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 293 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            , static_cast<attr_t>(((static_cast<chtype>(((
-# 292 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 293 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            obstacle->color
-# 292 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 293 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 292 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 293 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                                       ;
             mvwprintw(obstacle->win->window, obstacle->y, obstacle->x + i, "X");
             
-# 294 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 295 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            wattr_off(
-# 294 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 295 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            obstacle->win->window
-# 294 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 295 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            , static_cast<attr_t>(((static_cast<chtype>(((
-# 294 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 295 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
            obstacle->color
-# 294 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 295 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
            ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 294 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 295 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                                        ;
         }
     box(obstacle->win->window, 0, 0);
-    wrefresh(obstacle->win->window);
 }
 
 int isLineOccupied(Obstacles** obstacle, int y) {
@@ -4519,8 +4537,164 @@ void stopObstacle(Obstacles** obstacle, OBJ* frog) {
         }
     }
 }
+
+
+
+
+void PrintCar(FriendlyCars* car) {
+    for (int i = 0; i<car->width; i++) {
+        
+# 410 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+       wattr_on(
+# 410 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+       car->win->window
+# 410 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+       , static_cast<attr_t>(((static_cast<chtype>(((
+# 410 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+       car->color
+# 410 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+       ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
+# 410 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                                                        ;
+        mvwprintw(car->win->window, car->y, car->x+i, "F");
+        
+# 412 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+       wattr_off(
 # 412 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
-void endGame(const char* info, WIN* W) {
+       car->win->window
+# 412 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+       , static_cast<attr_t>(((static_cast<chtype>(((
+# 412 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+       car->color
+# 412 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+       ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
+# 412 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                                                         ;
+    }
+
+    box(car->win->window, 0, 0);
+}
+
+int isLineOccupiedByFriendlyCar(FriendlyCars** cars, int y) {
+    for(int i = 0; i<2; i++) {
+        if(cars[i] != 
+# 420 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+                     __null 
+# 420 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                          && cars[i]->y == y) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void MoveFrogToNewLocation(OBJ* frog) {
+    int newX = rand()% (frog->win->cols - 2) + 1;
+    int newY = rand()% (frog->win->rows - 2) + 1;
+
+    while(newY == 1 || newY == frog->y || newX == frog->x) {
+        newX = rand()% (frog->win->cols - 2) + 1;
+        newY = rand()% (frog->win->rows - 2) + 1;
+    }
+    frog->x = newX;
+    frog->y = newY;
+    PrintFrog(frog);
+}
+
+FriendlyCars* InitFriendlyCar(WIN* w, int x, int y, int color) {
+    FriendlyCars* car = (FriendlyCars*)malloc(sizeof(FriendlyCars));
+
+    if (car == 
+# 443 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+              __null
+# 443 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                  ) {
+        fprintf(
+# 444 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+               (__acrt_iob_func(2))
+# 444 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                     , "Error allocating memory for friendly cars.\n");
+        exit(
+# 445 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+            1
+# 445 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                        );
+    }
+
+    car->win = w;
+    car->color = color;
+    car->speed = 1;
+    car->x = x;
+    car->y = y;
+    car->width = 5;
+    car->height = 1;
+
+    PrintCar(car);
+    return car;
+}
+
+FriendlyCars** GenerateFriendlyCars(WIN* win, int safeArea) {
+    FriendlyCars** cars = (FriendlyCars**)malloc(sizeof(FriendlyCars*)* 2);
+    if (cars == 
+# 462 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+               __null
+# 462 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                   ) {
+        fprintf(
+# 463 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+               (__acrt_iob_func(2))
+# 463 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                     , "Error allocating memory for friendly cars.\n");
+        exit(
+# 464 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+            1
+# 464 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                        );
+    }
+    for (int i = 0; i < 2; i++) {
+        int x = rand() % (win->cols - 2) + 1;
+        int y = rand() % (win->rows - 2) + 1;
+        while (y == 25 || y == 1 || y == safeArea || isLineOccupiedByFriendlyCar(cars, y)) {
+            y = rand() % (win->rows - 2) + 1;
+        }
+        cars[i] = InitFriendlyCar(win, x, y, 8);
+    }
+
+    return cars;
+}
+
+void MoveFriendlyCars(FriendlyCars** cars, int max_rows, Holes** holes, OBJ* frog, int* key) {
+    for (int i = 0; i < 2; i++) {
+        FriendlyCars* car = cars[i];
+
+        if (car->x <= frog->x + frog->width && car->x + car->width >= frog->x && car->y == frog->y) {
+            if (*key == 'z') {
+                MoveFrogToNewLocation(frog);
+            }
+        }
+        for (int j = 0; j < car->width; j++) {
+            mvwprintw(car->win->window, car->y, car->x + j, " ");
+        }
+        car->x -= car->speed;
+
+        if (car->x + car->width < 1) {
+            car->x = car->win->cols - 2;
+            int newY = rand() % (max_rows - 2) + 1;
+            while (newY == 25 || newY == 1 || newY == max_rows / 2 || isLineOccupiedByFriendlyCar(cars, newY)) {
+                newY = rand() % (max_rows - 2) + 1;
+            }
+            car->y = newY;
+        }
+        PrintCar(car);
+    }
+    for(int i= 0; i < 7; i++) {
+        PrintHole(holes[i]);
+    }
+    PrintFrog(frog);
+    wrefresh(cars[0]->win->window);
+}
+# 516 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+void EndGameStat(const char* info, WIN* W) {
     CleanWin(W, 1);
     for(int i = 3; i>0; i--) {
         mvwprintw(W->window, 1, 2, "%s Closing the game in %d seconds...", info, i);
@@ -4529,54 +4703,68 @@ void endGame(const char* info, WIN* W) {
     }
 }
 
-void freeMemory(Obstacles** obstacle, OBJ* frog, TIMER* timer) {
+void freeMemory(Obstacles** obstacle, OBJ* frog, TIMER* timer, Holes** holes) {
     if (frog != 
-# 422 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 526 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 422 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 526 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ) {
         free(frog);
         frog = 
-# 424 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 528 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
               __null
-# 424 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 528 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                   ;
     }
     for(int i = 0; i < 5; i++) {
         if (obstacle[i] != 
-# 427 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 531 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                           __null
-# 427 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 531 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                               ) {
-            delwin(obstacle[i]->win->window);
             free(obstacle[i]);
             obstacle[i] = 
-# 430 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 533 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                          __null
-# 430 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 533 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                              ;
         }
     }
 
+    for(int i = 0; i < 7; i++) {
+        if (holes[i] != 
+# 538 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+                       __null
+# 538 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                           ) {
+            free(holes[i]);
+            holes[i] = 
+# 540 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+                      __null
+# 540 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+                          ;
+        }
+    }
+
     if(timer != 
-# 434 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 544 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 434 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 544 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ) {
         free(timer);
         timer = 
-# 436 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 546 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 436 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 546 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ;
     }
 }
 
 void freeWin(WIN* win) {
     if (win != 
-# 441 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 551 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
               __null
-# 441 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 551 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                   ) {
         delwin(win->window);
         free(win);
@@ -4586,61 +4774,61 @@ void freeWin(WIN* win) {
 void DrawLine(WIN* W) {
     for(int i = 1; i < W->cols -1 ; i++) {
         
-# 449 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 559 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        wattr_on(
-# 449 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 559 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        W->window
-# 449 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 559 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        , static_cast<attr_t>(((static_cast<chtype>(((
-# 449 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 559 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        6
-# 449 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 559 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 449 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 559 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                   ;
         mvwprintw(W->window, 1, i, " ");
         mvwprintw(W->window, 1, 36, "FINISH");
         
-# 452 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 562 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        wattr_off(
-# 452 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 562 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        W->window
-# 452 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 562 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        , static_cast<attr_t>(((static_cast<chtype>(((
-# 452 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 562 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        6
-# 452 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 562 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 452 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 562 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                    ;
     }
     for(int i = 1; i<W->cols-1; i++) {
         
-# 455 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 565 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        wattr_on(
-# 455 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 565 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        W->window
-# 455 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 565 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        , static_cast<attr_t>(((static_cast<chtype>(((
-# 455 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 565 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        5
-# 455 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 565 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 455 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 565 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                 ;
         mvwprintw(W->window, W->rows/2, i, "-");
         
-# 457 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 567 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        wattr_off(
-# 457 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 567 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        W->window
-# 457 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 567 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        , static_cast<attr_t>(((static_cast<chtype>(((
-# 457 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 567 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
        5
-# 457 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 567 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
        ))) << ((0) + 8)) & (static_cast<chtype>((((1U) << 8) - 1U)) << ((0) + 8)))), __null)
-# 457 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 567 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                                                  ;
     }
     wrefresh(W->window);
@@ -4653,14 +4841,14 @@ void DrawLine(WIN* W) {
 void SaveScore(const char* filename, const char* name, int score) {
     FILE* file = fopen(filename, "a");
     if (file == 
-# 468 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 578 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 468 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 578 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ) {
         fprintf(
-# 469 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 579 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 469 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 579 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Could not open file %s\n", filename);
         return;
     }
@@ -4671,14 +4859,14 @@ void SaveScore(const char* filename, const char* name, int score) {
 int LoadScores(const char* filename, Score* scores, int max_scores) {
     FILE* file = fopen(filename, "r");
     if (file == 
-# 478 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 588 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 478 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 588 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ) {
         fprintf(
-# 479 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 589 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 479 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 589 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Could not open file %s\n", filename);
         return 0;
     }
@@ -4716,19 +4904,19 @@ void ShowRanking(WINDOW *win, const Score* scores, int count) {
 void loadSettings(const char* filename, int *lives, int *game_time, int *window_width, int *window_height) {
     FILE *file = fopen(filename, "r");
     if (file == 
-# 515 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 625 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
                __null
-# 515 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 625 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                    ) {
         fprintf(
-# 516 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 626 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                (__acrt_iob_func(2))
-# 516 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 626 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                      , "Błąd otwierania pliku: %s\n", filename);
         exit(
-# 517 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 627 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
             1
-# 517 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 627 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                         );
     }
 
@@ -4758,19 +4946,26 @@ void loadSettings(const char* filename, int *lives, int *game_time, int *window_
 
 
 
-int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles, Holes** holes) {
+int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** obstacles, Holes** holes, FriendlyCars** cars) {
     int ch;
+    int key = 0;
 
     while((ch = wgetch(status->window)) != 'q') {
         if (ch == 
-# 550 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
+# 661 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3
                  (-1)
-# 550 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 661 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                     ) {
             ch = ' ';
         }
         else {
             moveFrog(frog, ch);
+        }
+
+        if(ch == 'z') {
+            key = 'z';
+        }else {
+            key = 0;
         }
 
         if(frog->y == 1) {
@@ -4802,6 +4997,7 @@ int mainLoop(WIN* status, OBJ* frog, TIMER* timer, int PASS_TIME, Obstacles** ob
 
         MoveObstacles(obstacles, frog->win->rows, holes);
         stopObstacle(obstacles, frog);
+        MoveFriendlyCars(cars, frog->win->rows, holes, frog, &key);
 
         for(int i = 0; i<7; i++) {
             PrintHole(holes[i]);
@@ -4843,13 +5039,28 @@ void endGameFile(TIMER* timer, WINDOW* mainwin,OBJ* frog, char player_name[]) {
 
 }
 
+void endGame(int result, TIMER* timer, OBJ* frog, WINDOW* mainwin, WIN* statwin, char player_name[]) {
+    if (result == 0) {
+        EndGameStat(" ", statwin);
+    } else if (result == 1) {
+        EndGameStat("Time is up! Game over.", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
+    } else if (result == 2) {
+        EndGameStat("You win!", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
+    } else if(result == 3) {
+        EndGameStat("The frog was run over!", statwin);
+        endGameFile(timer, mainwin, frog, player_name);
+    }
+}
+
 
 
 int main() {
     srand(time(
-# 630 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
+# 763 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp" 3 4
               __null
-# 630 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
+# 763 "C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog2/main.cpp"
                   ));
     char player_name[50];
     WINDOW* mainwin = Start();
@@ -4867,29 +5078,17 @@ int main() {
 
     Holes** holes = GenerateHoles(playwin, playwin->rows/2);
     Obstacles** obstacles = GenerateObstacles(playwin, playwin->rows/2);
+    FriendlyCars** cars = GenerateFriendlyCars(playwin, playwin->rows/2);
 
 
     DrawLine(playwin);
 
-    int result = mainLoop(statwin, frog, timer, game_time, obstacles, holes);
-
-    if (result == 0) {
-        endGame(" ", statwin);
-    } else if (result == 1) {
-        endGame("Time is up! Game over.", statwin);
-        endGameFile(timer, mainwin, frog, player_name);
-    } else if (result == 2) {
-        endGame("You win!", statwin);
-        endGameFile(timer, mainwin, frog, player_name);
-    } else if(result == 3) {
-        endGame("The frog was run over!", statwin);
-        endGameFile(timer, mainwin, frog, player_name);
-    }
+    int result = mainLoop(statwin, frog, timer, game_time, obstacles, holes, cars);
+    endGame(result, timer, frog, mainwin, statwin, player_name);
 
 
 
-
-    freeMemory(obstacles, frog, timer);
+    freeMemory(obstacles, frog, timer, holes);
     freeWin(playwin);
     freeWin(statwin);
     delwin(mainwin);
