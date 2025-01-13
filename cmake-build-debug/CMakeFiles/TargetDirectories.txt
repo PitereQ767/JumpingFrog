@@ -1,3 +1,0 @@
-C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog3/cmake-build-debug/CMakeFiles/JumpingFrog3.dir
-C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog3/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/48734/Documents/Studia/PodstawyProgramowania/projekt/JumpingFrog3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
